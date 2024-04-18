@@ -1,0 +1,71 @@
+28thMarch I have to implement it. 
+--------------------------------------------------------------------------
+
+Creating test scripts for all the suggested scenarios would be quite extensive, so I'll provide examples for a few key positive and negative test cases. These examples should give you a good starting point, and you can adapt or expand upon them based on your specific requirements.
+
+Setup and Helper Functions
+First, let's define the setup and some helper functions to avoid repetition. These helpers will make it easier to write individual test cases:
+
+python
+Copy code
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import unittest
+import time
+
+class LoginTest(unittest.TestCase):
+    def setUp(self):
+        # Setup WebDriver
+        self.driver = webdriver.Chrome()
+        self.driver.get("https://uat.thinglogixce.app/login")
+
+    def login(self, username, password):
+        # Fill in login form and submit
+        self.driver.find_element(By.ID, 'username').send_keys(username)
+        self.driver.find_element(By.ID, 'password').send_keys(password)
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        time.sleep(2)  # Use explicit waits in production code
+
+    def tearDown(self):
+        # Cleanup WebDriver
+        self.driver.quit()
+Positive Test Case
+A basic positive case where the user successfully logs in:
+
+python
+Copy code
+def test_valid_login(self):
+    self.login('validUsername', 'validPassword')
+    # Check for an element that's only visible upon successful login
+    success_element = self.driver.find_element(By.XPATH, 'xpath-of-element-visible-on-success')
+    self.assertIsNotNone(success_element)
+Negative Test Cases
+Here are a few examples of negative test cases:
+
+Invalid Username
+python
+Copy code
+def test_invalid_username(self):
+    self.login('invalidUsername', 'validPassword')
+    error_message = self.driver.find_element(By.XPATH, 'xpath-of-error-message-element')
+    self.assertIsNotNone(error_message)
+Empty Fields
+python
+Copy code
+def test_empty_fields(self):
+    self.login('', '')
+    error_message = self.driver.find_element(By.XPATH, 'xpath-of-error-message-element')
+    self.assertIsNotNone(error_message)
+SQL Injection
+python
+Copy code
+def test_sql_injection_attempt(self):
+    self.login("' OR '1'='1", "invalidPassword")
+    error_message = self.driver.find_element(By.XPATH, 'xpath-of-error-message-element')
+    self.assertIsNotNone(error_message)
+Tips for Further Development
+Replace 'validUsername', 'validPassword', and XPaths with actual values relevant to your application.
+Consider using Selenium's WebDriverWait instead of time.sleep() for more reliable tests.
+For the negative tests, ensure you have the correct XPaths for the error message elements and that you're correctly asserting their presence or verifying the error message.
+You may need additional setup or cleanup for certain tests, especially if testing requires specific preconditions.
+These examples cover both successful login and a few common failure scenarios. You can extend this approach to cover all the other test cases you need.
